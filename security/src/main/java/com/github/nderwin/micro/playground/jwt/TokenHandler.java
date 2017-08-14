@@ -54,8 +54,7 @@ public class TokenHandler {
 
         String jwt = Jwts.builder()
                 .setSubject(c.getUsername())
-                // TODO - persist roles/groups in Caller
-                .claim("scope", Arrays.asList("USER"))
+                .claim("scope", c.getRoles())
                 .setId(UUID.randomUUID().toString())
                 .setExpiration(expiration.getTime())
                 .setIssuedAt(now)

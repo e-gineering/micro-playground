@@ -1,13 +1,20 @@
 package com.github.nderwin.micro.playground.security.entity;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
@@ -35,6 +42,11 @@ public class Caller implements Serializable {
     @Basic(optional = false)
     @Column(name = "password", nullable = false, length = 255)
     private String password;
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(schema = "security", name = "caller_role", joinColumns = {@JoinColumn(name = "caller_id", referencedColumnName = "id")})
+    @Column(name = "role", nullable = false)
+    private Set<String> roles = new HashSet<>();
 
     protected Caller() {
     }
@@ -62,6 +74,18 @@ public class Caller implements Serializable {
 
     public void setPassword(final String password) {
         this.password = password;
+    }
+
+    public Set<String> getRoles() {
+        return Collections.unmodifiableSet(roles);
+    }
+    
+    public boolean addRole(final String role) {
+        return roles.add(Objects.requireNonNull(role));
+    }
+    
+    public boolean removeRole(final String role) {
+        return roles.remove(Objects.requireNonNull(role));
     }
 
     @Override
