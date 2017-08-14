@@ -1,17 +1,18 @@
 package com.github.nderwin.micro.playground.security.boundary;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Base64;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.github.nderwin.micro.playground.security.control.BCryptPasswordHash;
+import com.github.nderwin.micro.playground.jwt.TokenHandler;
+import com.github.nderwin.micro.playground.security.entity.Caller;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -32,31 +33,38 @@ import javax.ws.rs.core.Response;
 @RolesAllowed("USER")
 public class AuthenticationResource {
 
-    private static final Logger LOG = Logger.getLogger(AuthenticationResource.class.getName());
-    
     @PersistenceContext
     EntityManager em;
+    
+    @Inject
+    BCryptPasswordHash passwordHash;
+    
+    @Inject
+    TokenHandler tokenHandler;
     
     @POST
     @Path("/login")
     @PermitAll
     public Response login(final JsonObject body) {
         try {
-            // TODO - build and return a JWT
-            JsonObjectBuilder job = Json.createObjectBuilder();
-            return Response.ok(
-                    job.add(
-                        "token", 
-                        Base64.getEncoder().encodeToString(
-                            (body.getString("username") + ":" + body.getString("password")).getBytes("UTF-8")
-                        )
-                    ).build()
-            ).build();
-        } catch (NoResultException ex) {
+            Caller c = em.createNamedQuery("Caller.findByUsername", Caller.class)
+                    .setParameter("username", body.getString("username"))
+                    .getSingleResult();
+            
+            if (passwordHash.verify(body.getString("password").toCharArray(), c.getPassword())) {
+                String token = tokenHandler.createCredential(c);
+
+                if (null == token) {
+                    return Response.serverError().build();
+                }
+
+                JsonObjectBuilder job = Json.createObjectBuilder();
+                return Response.ok(job.add("token", token).build()).build();
+            }
+            
             return Response.status(Response.Status.UNAUTHORIZED).build();
-        } catch (UnsupportedEncodingException ex) {
-            LOG.log(Level.SEVERE, ex.getMessage(), ex);
-            return Response.serverError().build();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
     
