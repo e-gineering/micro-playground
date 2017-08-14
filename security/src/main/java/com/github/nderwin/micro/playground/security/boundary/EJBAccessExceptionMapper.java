@@ -1,4 +1,4 @@
-package com.github.nderwin.micro.playground;
+package com.github.nderwin.micro.playground.security.boundary;
 
 import javax.ejb.EJBAccessException;
 import javax.ws.rs.core.Response;
