@@ -15,6 +15,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -62,6 +63,8 @@ public class AuthenticationResource {
     @GET
     @PUT
     @POST
+    @DELETE
+    // TODO @PATCH
     @Path("/logout")
     public Response logout(@Context HttpServletRequest request) {
         // TODO - track the invalidated JWTs
