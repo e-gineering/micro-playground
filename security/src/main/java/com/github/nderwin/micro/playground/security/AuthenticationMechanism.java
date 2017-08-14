@@ -1,5 +1,6 @@
 package com.github.nderwin.micro.playground.security;
 
+import com.github.nderwin.micro.playground.security.control.BCryptPasswordHash;
 import java.util.Base64;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,12 +24,7 @@ import static javax.security.enterprise.identitystore.CredentialValidationResult
     dataSourceLookup = "${'java:/shareDS'}",
     callerQuery = "#{'select password from security.caller where username = ?'}",
     groupsQuery = "select 'USER' from security.caller where username = ?",
-    hashAlgorithm = Pbkdf2PasswordHash.class,
-    hashAlgorithmParameters = {
-        "Pbkdf2PasswordHash.Iterations=3072",
-        "Pbkdf2PasswordHash.Algorithm=PBKDF2WithHmacSHA512", 
-        "Pbkdf2PasswordHash.SaltSizeBytes=64"
-    }
+    hashAlgorithm = BCryptPasswordHash.class
 )
 @ApplicationScoped
 public class AuthenticationMechanism implements HttpAuthenticationMechanism {
@@ -53,7 +49,7 @@ public class AuthenticationMechanism implements HttpAuthenticationMechanism {
             String[] parts = decoded.split(":");
             
             String username = parts[0];
-            Password password = new Password(decoded.substring(username.length() + 1));
+            Password password = new Password(parts[1]);
             
             CredentialValidationResult result = identityStoreHandler.validate(new UsernamePasswordCredential(username, password));
             
