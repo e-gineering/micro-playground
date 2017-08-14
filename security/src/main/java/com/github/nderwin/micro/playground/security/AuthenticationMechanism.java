@@ -13,7 +13,6 @@ import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import javax.security.enterprise.identitystore.IdentityStoreHandler;
-import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
@@ -34,9 +33,6 @@ public class AuthenticationMechanism implements HttpAuthenticationMechanism {
     @Inject
     IdentityStoreHandler identityStoreHandler;
 
-    @Inject
-    private Pbkdf2PasswordHash passwordHash;
-    
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request, final HttpServletResponse response, final HttpMessageContext context) throws AuthenticationException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
