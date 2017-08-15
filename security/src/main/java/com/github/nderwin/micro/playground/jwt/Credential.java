@@ -1,6 +1,7 @@
 package com.github.nderwin.micro.playground.jwt;
 
 import io.jsonwebtoken.Claims;
+import java.util.Date;
 import java.util.List;
 
 public class Credential implements javax.security.enterprise.credential.Credential {
@@ -17,5 +18,9 @@ public class Credential implements javax.security.enterprise.credential.Credenti
     
     public List getScope() {
         return (null == this.claims) ? null : this.claims.get("scope", List.class);
+    }
+    
+    public Date getExpirationDate() {
+        return (null == this.claims) ? null : new Date(this.claims.getExpiration().getTime());
     }
 }

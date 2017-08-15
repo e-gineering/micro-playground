@@ -1,8 +1,10 @@
 package com.github.nderwin.micro.playground.security.boundary;
 
+import com.github.nderwin.micro.playground.jwt.Credential;
 import com.github.nderwin.micro.playground.security.control.BCryptPasswordHash;
 import com.github.nderwin.micro.playground.jwt.TokenHandler;
 import com.github.nderwin.micro.playground.security.entity.Caller;
+import com.github.nderwin.micro.playground.security.entity.InvalidToken;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -23,6 +25,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -72,10 +75,20 @@ public class AuthenticationResource {
     @PUT
     @POST
     @DELETE
-    // TODO @PATCH
+    @PATCH
     @Path("/logout")
     public Response logout(@Context HttpServletRequest request) {
-        // TODO - track the invalidated JWTs
-        return Response.ok().build();
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (null != authHeader) {
+            String token = tokenHandler.stripHeader(authHeader);
+            Credential credential = tokenHandler.retrieveCredential(token);
+            
+            InvalidToken it = new InvalidToken(token, credential.getExpirationDate());
+            em.persist(it);
+
+            return Response.ok().build();
+        }
+        
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }

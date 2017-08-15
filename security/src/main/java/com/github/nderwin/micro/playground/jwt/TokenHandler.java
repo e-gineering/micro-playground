@@ -1,6 +1,7 @@
 package com.github.nderwin.micro.playground.jwt;
 
 import com.github.nderwin.micro.playground.security.entity.Caller;
+import com.github.nderwin.micro.playground.security.entity.InvalidToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -13,7 +14,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -21,11 +21,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @ApplicationScoped
 public class TokenHandler {
 
     private static final Logger LOG = Logger.getLogger(TokenHandler.class.getName());
+    
+    private static final String BEARER = "Bearer ";
+
+    @PersistenceContext
+    EntityManager em;
     
     private RSAPrivateKey privateKey;
     
@@ -46,8 +53,19 @@ public class TokenHandler {
         privateKey = (RSAPrivateKey) kp.getPrivate();
     }
     
+    public String stripHeader(final String authorizationHeader) {
+        if (authorizationHeader.startsWith(BEARER)) {
+            return authorizationHeader.substring(BEARER.length());
+        }
+        
+        return authorizationHeader;
+    }
+    
     public String createCredential(final Caller c) {
         Date now = new Date();
+        
+        // Expire 1 hour from now
+        // TODO - make this configurable?
         Calendar expiration = Calendar.getInstance();
         expiration.setTime(now);
         expiration.add(Calendar.HOUR, 1);
@@ -67,10 +85,16 @@ public class TokenHandler {
     public Credential retrieveCredential(final String token) {
         Credential credential = null;
         
+        String jwt = stripHeader(token);
+        
         try {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(privateKey)
-                    .parseClaimsJws(token);
+                    .parseClaimsJws(jwt);
+            
+            if (null != em.find(InvalidToken.class, jwt)) {
+                throw new ExpiredJwtException(claims.getHeader(), claims.getBody(), "Token has been invalidated");
+            }
             
             credential = new Credential(claims.getBody());
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException ex) {

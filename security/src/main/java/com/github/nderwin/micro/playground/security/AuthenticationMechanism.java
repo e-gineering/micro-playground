@@ -19,8 +19,6 @@ import static javax.security.enterprise.identitystore.CredentialValidationResult
 @ApplicationScoped
 public class AuthenticationMechanism implements HttpAuthenticationMechanism {
 
-    private static final String BEARER = "Bearer ";
-
     @Inject
     IdentityStoreHandler identityStoreHandler;
     
@@ -31,10 +29,8 @@ public class AuthenticationMechanism implements HttpAuthenticationMechanism {
     public AuthenticationStatus validateRequest(final HttpServletRequest request, final HttpServletResponse response, final HttpMessageContext context) throws AuthenticationException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         
-        if (null != authHeader && authHeader.startsWith(BEARER)) {
-            String token = authHeader.substring(BEARER.length());
-
-            Credential credential = tokenHandler.retrieveCredential(token);
+        if (null != authHeader) {
+            Credential credential = tokenHandler.retrieveCredential(authHeader);
             
             CredentialValidationResult result = identityStoreHandler.validate(credential);
             
