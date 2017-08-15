@@ -12,6 +12,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <showDeprecation>true</showDeprecation>
+        <docker.buildArg.finalName>${project.build.finalName}</docker.buildArg.finalName>
     </properties>
     
     <dependencies>
@@ -51,6 +52,52 @@
     
     <build>
         <finalName>security</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/classes</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources-wildfly</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}</targetPath>
+            </resource>
+            <resource>
+                <directory>/opt</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>postgresql-42.1.1.jar</include>
+                </includes>
+                <targetPath>${project.build.directory}</targetPath>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.21.0</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>nderwin/%a:%v</name>
+                            <build>
+                                <dockerFileDir>${project.basedir}</dockerFileDir>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>docker:build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
     
     <profiles>
