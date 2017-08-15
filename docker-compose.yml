@@ -16,9 +16,17 @@ services:
         secrets:
           - postgres_username
           - postgres_password
+    security:
+        image: nderwin/security:1.0.0-SNAPSHOT
+        container_name: security
+        depends_on:
+          - "microservdb"
+        ports:
+          - "8080:8080"
+          - "9990:9990"
 
 secrets:
     postgres_username:
-        file: ./dockersecrets/postgres_contact_username
+        file: ./dockersecrets/postgres_username
     postgres_password:
-        file: ./dockersecrets/postgres_contact_password
+        file: ./dockersecrets/postgres_password
