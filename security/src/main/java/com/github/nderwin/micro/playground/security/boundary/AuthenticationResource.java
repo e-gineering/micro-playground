@@ -8,6 +8,8 @@ import com.github.nderwin.micro.playground.security.entity.InvalidToken;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -31,6 +33,7 @@ import javax.ws.rs.core.Response;
 
 @Stateless
 @Path("/authentication")
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @RolesAllowed("USER")
