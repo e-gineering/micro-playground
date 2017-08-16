@@ -422,10 +422,4 @@
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
     </socket-binding-group>
-
-<!--    <deployments>
-        <deployment name="postgresql-42.1.1.jar" runtime-name="postgresql-42.1.1.jar">
-            <content sha1="8a0b76d763f5382d6357c412eeb14970ba4405f3"/>
-        </deployment>
-    </deployments>-->
 </server>

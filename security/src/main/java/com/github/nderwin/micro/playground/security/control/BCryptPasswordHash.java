@@ -16,7 +16,6 @@ public class BCryptPasswordHash implements PasswordHash {
 
     @Override
     public boolean verify(final char[] password, final String hashedPassword) {
-        String foo = new String(password);
         return BCrypt.checkpw(new String(password), hashedPassword);
     }
     
