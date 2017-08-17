@@ -1,4 +1,4 @@
-package com.github.nderwin.micro.playground.jwt;
+package com.github.nderwin.micro.playground.security.jwt;
 
 import com.github.nderwin.micro.playground.security.entity.Caller;
 import com.github.nderwin.micro.playground.security.entity.InvalidToken;

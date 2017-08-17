@@ -1,4 +1,4 @@
-package com.github.nderwin.micro.playground.jwt;
+package com.github.nderwin.micro.playground.security.jwt;
 
 import java.util.HashSet;
 import java.util.Set;

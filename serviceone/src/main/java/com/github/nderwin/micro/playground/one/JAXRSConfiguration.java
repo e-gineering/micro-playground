@@ -1,4 +1,4 @@
-package com.github.nderwin.micro.playground;
+package com.github.nderwin.micro.playground.one;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
