@@ -1,6 +1,22 @@
 version: '3.1'
 
 services:
+    serviceone:
+        image: nderwin/serviceone:1.0.0-SNAPSHOT
+        container_name: serviceone
+        depends_on:
+          - "security"
+        ports:
+          - "8081:8080"
+          - "9991:9990"
+    security:
+        image: nderwin/security:1.0.0-SNAPSHOT
+        container_name: security
+        depends_on:
+          - "microservdb"
+        ports:
+          - "8080:8080"
+          - "9990:9990"
     microservdb:
         image: postgres:9.6.3
         container_name: microservdb
@@ -16,14 +32,6 @@ services:
         secrets:
           - postgres_username
           - postgres_password
-    security:
-        image: nderwin/security:1.0.0-SNAPSHOT
-        container_name: security
-        depends_on:
-          - "microservdb"
-        ports:
-          - "8080:8080"
-          - "9990:9990"
 
 secrets:
     postgres_username:
