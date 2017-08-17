@@ -94,4 +94,18 @@ public class AuthenticationResource {
         
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+    
+    @GET
+    @Path("/info")
+    public Response info(@Context HttpServletRequest request) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        
+        if (null != authHeader) {
+            Credential credential = tokenHandler.retrieveCredential(authHeader);
+            
+            return Response.ok(credential.toJson()).build();
+        }
+        
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
 }
