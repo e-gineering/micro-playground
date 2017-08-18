@@ -23,7 +23,7 @@ public class OneResource {
     public Response get() {
         JsonObjectBuilder job = Json.createObjectBuilder();
         
-        job.add("one", "is the loneliest number");
+        job.add("one", "is the loneliest number that you'll ever do");
         
         return Response.ok(job.build()).build();
     }
