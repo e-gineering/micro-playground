@@ -1,4 +1,4 @@
-package com.github.nderwin.micro.playground.jwt;
+package com.github.nderwin.micro.playground.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import java.util.Date;
