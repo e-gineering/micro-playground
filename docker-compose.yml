@@ -1,6 +1,15 @@
 version: '3.1'
 
 services:
+    servicetwo:
+        image: nderwin/servicetwo:1.0.0-SNAPSHOT
+        container_name: servicetwo
+        depends_on:
+          - "security"
+          - "serviceone"
+        ports:
+          - "8082:8080"
+          - "9992:9990"
     serviceone:
         image: nderwin/serviceone:1.0.0-SNAPSHOT
         container_name: serviceone
