@@ -15,6 +15,19 @@
         <docker.buildArg.finalName>${project.build.finalName}</docker.buildArg.finalName>
     </properties>
     
+    <repositories>
+        <repository>
+            <id>glassfish Promoted</id>
+            <url>https://maven.java.net/content/repositories/promoted/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -24,11 +37,11 @@
         </dependency>
         
         <!-- JSR 375 Security -->
-        <dependency>
+<!--        <dependency>
             <groupId>javax.security.enterprise</groupId>
             <artifactId>javax.security.enterprise-api</artifactId>
             <version>1.0-b11</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.glassfish.soteria</groupId>
             <artifactId>javax.security.enterprise</artifactId>
