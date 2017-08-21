@@ -1,0 +1,61 @@
+@startuml
+
+hide stereotype
+
+skinparam {
+    arrowColor black
+}
+
+skinparam artifact {
+    backgroundColor #5382a1
+    fontColor white
+}
+
+skinparam database {
+    backgroundColor white
+}
+
+skinparam frame {
+    backgroundColor white
+    fontColor #243446
+}
+
+skinparam node<<container>> {
+    backgroundColor #1488c6
+    fontColor white
+    fontStyle bold
+}
+
+node microservdb <<container>> {
+    database db as "PostgreSQL" {
+        storage securityschema as "security"
+    }
+}
+
+node security <<container>> {
+    frame wf1 as "Wildfly" {
+        artifact jdbcdriver as "postgresql-42.1.1.jar"
+        artifact security.war
+    }
+}
+
+node serviceone <<container>> {
+    frame wf2 as "Wildfly" {
+        artifact serviceone.war
+    }
+}
+
+node servicetwo <<container>> {
+    frame wf3 as "Wildfly" {
+        artifact servicetwo.war
+    }
+}
+
+wf1 -- db : shareDS
+security.war -- wf1 : java:/shareDS
+
+serviceone.war -- security.war : REST
+servicetwo.war -- security.war : REST
+servicetwo.war -- serviceone.war : REST
+
+@enduml
