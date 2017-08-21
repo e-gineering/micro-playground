@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="create-caller" author="nderwin">
+        <comment>Creating the tables for the Caller entity</comment>
+
+        <createSequence sequenceName="caller_seq" />
+
+        <createTable tableName="caller">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_caller" />
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="create-caller-role" author="nderwin">
+        <createTable schemaName="security" tableName="caller_role">
+            <column name="caller_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="role" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <addPrimaryKey schemaName="security" tableName="caller_role" columnNames="caller_id, role" constraintName="PK_caller_role" />
+        <addForeignKeyConstraint 
+            baseTableSchemaName="security" baseTableName="caller_role" baseColumnNames="caller_id" 
+            constraintName="FK_caller_role_caller_id" 
+            referencedTableSchemaName="security" referencedTableName="caller" referencedColumnNames="id" />
+    </changeSet>
+
+    <changeSet id="create-token-invalidation-cache" author="nderwin">
+        <comment>Create the table to store invalidated auth tokens</comment>
+        
+        <createTable schemaName="security" tableName="invalid_token">
+            <column name="token" type="VARCHAR(8192)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_invalid_token" />
+            </column>
+            <column name="expiration_date" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        
+        <createIndex schemaName="security" tableName="invalid_token" indexName="IDX_invalid_token_expiration_date">
+            <column name="expiration_date" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

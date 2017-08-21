@@ -1,0 +1,5 @@
+nb*
+/dockersecrets
+/security/target/
+/serviceone/target/
+/servicetwo/target/
