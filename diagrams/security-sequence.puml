@@ -1,0 +1,73 @@
+@startuml
+
+hide footbox
+
+skinparam sequence {
+    arrowColor black
+    LifeLineBorderColor black
+}
+
+skinparam actor {
+    backgroundColor white
+    borderColor black
+}
+
+skinparam boundary {
+    backgroundColor white
+    borderColor black
+}
+
+skinparam control {
+    backgroundColor white
+    borderColor black
+}
+
+skinparam participant {
+    backgroundColor white
+    borderColor black
+}
+
+actor Caller
+boundary RESTFramework
+control AuthenticationMechanism
+control TokenHandler
+control IdentityStore
+control HttpMessageContext
+boundary AuthenticationResource
+
+activate Caller
+
+Caller -> RESTFramework : HTTP Request
+activate RESTFramework
+
+    RESTFramework -> AuthenticationMechanism : validateRequest()
+    activate AuthenticationMechanism
+        AuthenticationMechanism -> TokenHandler : retrieveCredential(authHeader)
+        activate TokenHandler
+        TokenHandler -->> AuthenticationMechanism : Credential
+        deactivate TokenHandler
+
+        AuthenticationMechanism -> IdentityStore : validate()
+        activate IdentityStore
+        IdentityStore -->> AuthenticationMechanism : CredentialValidationResult
+        deactivate IdentityStore
+
+        AuthenticationMechanism -> HttpMessageContext : notifyContainerAboutLogin(callername, groups)
+        activate HttpMessageContext
+        HttpMessageContext -->> AuthenticationMechanism : AuthenticationStatus.SUCCESS
+        deactivate HttpMessageContext
+
+    AuthenticationMechanism -->> RESTFramework : AuthenticationStatus.SUCCESS
+    deactivate AuthenticationMechanism
+
+
+    RESTFramework -> AuthenticationResource : HTTP Request
+    activate AuthenticationResource
+
+    AuthenticationResource -->> RESTFramework : HTTP Response
+    deactivate AuthenticationResource
+
+RESTFramework -->> Caller : HTTP Response
+deactivate RESTFramework
+
+@enduml
