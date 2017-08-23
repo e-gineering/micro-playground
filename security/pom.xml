@@ -110,6 +110,33 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.sebastian-daschner</groupId>
+                <artifactId>jaxrs-analyzer-maven-plugin</artifactId>
+                <version>0.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>analyze-jaxrs</goal>
+                        </goals>
+                        <configuration>
+                            <backend>swagger</backend>
+                            <deployedDomain>localhost:8080/security</deployedDomain>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>${project.build.directory}/jaxrs-analyzer</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     

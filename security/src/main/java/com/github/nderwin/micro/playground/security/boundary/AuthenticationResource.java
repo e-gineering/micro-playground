@@ -108,4 +108,19 @@ public class AuthenticationResource {
         
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+    
+    @POST
+    @PermitAll
+    @Path("/hash")
+    public Response hash(final JsonObject body) {
+        if (body.containsKey("password") && !body.isNull("password")) {
+            JsonObjectBuilder job = Json.createObjectBuilder();
+            
+            job.add("hash", passwordHash.generate(body.getString("password").toCharArray()));
+            
+            return Response.ok(job.build()).build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
 }
