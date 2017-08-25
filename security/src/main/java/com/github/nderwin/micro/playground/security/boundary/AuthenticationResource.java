@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -118,11 +117,7 @@ public class AuthenticationResource {
         Caller c = new Caller(user.username, passwordHash.generate(user.password.toCharArray()));
         c.addRole("USER");
         
-        try {
-            em.persist(c);
-        } catch (EntityExistsException ex) {
-            return Response.status(Response.Status.CONFLICT).build();
-        }
+        em.persist(c);
         
         return Response.created(URI.create(request.getRequestURI() + "/login")).build();
     }
