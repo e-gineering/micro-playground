@@ -1,10 +1,11 @@
 package com.github.nderwin.micro.playground.security.boundary;
 
-import com.github.nderwin.micro.playground.security.jwt.Credential;
+import com.github.nderwin.micro.playground.security.jwt.TokenCredential;
 import com.github.nderwin.micro.playground.security.control.BCryptPasswordHash;
 import com.github.nderwin.micro.playground.security.jwt.TokenHandler;
 import com.github.nderwin.micro.playground.security.entity.Caller;
 import com.github.nderwin.micro.playground.security.entity.InvalidToken;
+import java.net.URI;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -84,7 +86,7 @@ public class AuthenticationResource {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (null != authHeader) {
             String token = tokenHandler.stripHeader(authHeader);
-            Credential credential = tokenHandler.retrieveCredential(token);
+            TokenCredential credential = tokenHandler.retrieveCredential(token);
             
             InvalidToken it = new InvalidToken(token, credential.getExpirationDate());
             em.persist(it);
@@ -96,16 +98,33 @@ public class AuthenticationResource {
     }
     
     @GET
-    @Path("/info")
-    public Response info(@Context HttpServletRequest request) {
+    @Path("/")
+    public Response read(@Context HttpServletRequest request) {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         
         if (null != authHeader) {
-            Credential credential = tokenHandler.retrieveCredential(authHeader);
+            TokenCredential credential = tokenHandler.retrieveCredential(authHeader);
             
             return Response.ok(credential.toJson()).build();
         }
         
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+    
+    @POST
+    @Path("/")
+    @PermitAll
+    public Response create(final @Context HttpServletRequest request, final User user) {
+        Caller c = new Caller(user.username, passwordHash.generate(user.password.toCharArray()));
+        c.addRole("USER");
+        
+        try {
+            em.persist(c);
+        } catch (EntityExistsException ex) {
+            return Response.status(Response.Status.CONFLICT).build();
+        }
+        
+        return Response.created(URI.create(request.getRequestURI() + "/login")).build();
+    }
+    
 }

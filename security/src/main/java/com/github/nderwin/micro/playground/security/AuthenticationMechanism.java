@@ -1,6 +1,6 @@
 package com.github.nderwin.micro.playground.security;
 
-import com.github.nderwin.micro.playground.security.jwt.Credential;
+import com.github.nderwin.micro.playground.security.jwt.TokenCredential;
 import com.github.nderwin.micro.playground.security.jwt.TokenHandler;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,7 +30,7 @@ public class AuthenticationMechanism implements HttpAuthenticationMechanism {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         
         if (null != authHeader) {
-            Credential credential = tokenHandler.retrieveCredential(authHeader);
+            TokenCredential credential = tokenHandler.retrieveCredential(authHeader);
             
             CredentialValidationResult result = identityStoreHandler.validate(credential);
             
