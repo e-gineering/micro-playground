@@ -82,8 +82,8 @@ public class TokenHandler {
         return jwt;
     }
     
-    public Credential retrieveCredential(final String token) {
-        Credential credential = null;
+    public TokenCredential retrieveCredential(final String token) {
+        TokenCredential credential = null;
         
         String jwt = stripHeader(token);
         
@@ -96,7 +96,7 @@ public class TokenHandler {
                 throw new ExpiredJwtException(claims.getHeader(), claims.getBody(), "Token has been invalidated");
             }
             
-            credential = new Credential(claims.getBody());
+            credential = new TokenCredential(claims.getBody());
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException ex) {
             LOG.log(Level.WARNING, ex.getMessage(), ex);
         }

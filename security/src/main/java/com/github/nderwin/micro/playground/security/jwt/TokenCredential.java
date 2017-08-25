@@ -7,25 +7,34 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.security.enterprise.credential.Credential;
 
-public class Credential implements javax.security.enterprise.credential.Credential {
+public class TokenCredential implements Credential {
 
     private final Claims claims;
 
-    public Credential(final Claims claims) {
+    public TokenCredential(final Claims claims) {
+        if (null == claims) {
+            throw new IllegalArgumentException("Claims must not be null");
+        }
+        
         this.claims = claims;
     }
 
     public String getSubject() {
-        return (null == this.claims) ? null : this.claims.getSubject();
+        return this.claims.getSubject();
     }
 
     public List getScope() {
-        return (null == this.claims) ? null : this.claims.get("scope", List.class);
+        return this.claims.get("scope", List.class);
     }
 
     public Date getExpirationDate() {
-        return (null == this.claims) ? null : new Date(this.claims.getExpiration().getTime());
+        if (null != this.claims.getExpiration()) {
+            return new Date(this.claims.getExpiration().getTime());
+        }
+        
+        return null;
     }
 
     public JsonObject toJson() {

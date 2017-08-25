@@ -33,7 +33,7 @@ public class IdentityStore implements javax.security.enterprise.identitystore.Id
     
     private CredentialValidationResult validate(final CallerOnlyCredential credential) {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://security:8080/security/resources/authentication/info");
+        WebTarget target = client.target("http://security:8080/security/resources/authentication");
         
         try {
             JsonObject response = target
