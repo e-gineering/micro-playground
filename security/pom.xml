@@ -44,15 +44,10 @@
         </dependency>
         
         <!-- JSR 375 Security -->
-<!--        <dependency>
-            <groupId>javax.security.enterprise</groupId>
-            <artifactId>javax.security.enterprise-api</artifactId>
-            <version>1.0-b11</version>
-        </dependency>-->
         <dependency>
             <groupId>org.glassfish.soteria</groupId>
             <artifactId>javax.security.enterprise</artifactId>
-            <version>1.0-b11</version>
+            <version>1.0</version>
         </dependency>
         
         <!-- Password Hashing -->
@@ -147,7 +142,7 @@
                                 </goals>
                                 <configuration>
                                     <driver>org.postgresql.Driver</driver>
-                                    <url>jdbc:postgresql://172.18.0.2:5432/microserv</url>
+                                    <url>jdbc:postgresql://localhost:5432/microserv</url>
                                     <username>${dbuser}</username>
                                     <password>${dbpass}</password>
                                     <changeLogFile>src/main/resources/db/changelog.xml</changeLogFile>

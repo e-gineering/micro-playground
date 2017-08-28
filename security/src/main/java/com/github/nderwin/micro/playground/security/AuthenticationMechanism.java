@@ -1,7 +1,7 @@
 package com.github.nderwin.micro.playground.security;
 
-import com.github.nderwin.micro.playground.security.jwt.TokenCredential;
-import com.github.nderwin.micro.playground.security.jwt.TokenHandler;
+import com.github.nderwin.micro.playground.security.control.TokenCredential;
+import com.github.nderwin.micro.playground.security.control.TokenHandler;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
