@@ -1,8 +1,8 @@
 package com.github.nderwin.micro.playground.security.boundary;
 
-import com.github.nderwin.micro.playground.security.jwt.TokenCredential;
+import com.github.nderwin.micro.playground.security.control.TokenCredential;
 import com.github.nderwin.micro.playground.security.control.BCryptPasswordHash;
-import com.github.nderwin.micro.playground.security.jwt.TokenHandler;
+import com.github.nderwin.micro.playground.security.control.TokenHandler;
 import com.github.nderwin.micro.playground.security.entity.Caller;
 import com.github.nderwin.micro.playground.security.entity.InvalidToken;
 import java.net.URI;

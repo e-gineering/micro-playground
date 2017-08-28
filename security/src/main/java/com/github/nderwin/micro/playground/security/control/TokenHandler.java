@@ -1,5 +1,6 @@
-package com.github.nderwin.micro.playground.security.jwt;
+package com.github.nderwin.micro.playground.security.control;
 
+import com.github.nderwin.micro.playground.security.control.TokenCredential;
 import com.github.nderwin.micro.playground.security.entity.Caller;
 import com.github.nderwin.micro.playground.security.entity.InvalidToken;
 import io.jsonwebtoken.Claims;
