@@ -1,10 +1,8 @@
 package com.github.nderwin.micro.playground.security.boundary;
 
-import com.github.nderwin.micro.playground.security.control.TokenCredential;
 import com.github.nderwin.micro.playground.security.control.BCryptPasswordHash;
-import com.github.nderwin.micro.playground.security.control.TokenHandler;
+import com.github.nderwin.micro.playground.security.control.TokenIdentityStore;
 import com.github.nderwin.micro.playground.security.entity.Caller;
-import com.github.nderwin.micro.playground.security.entity.InvalidToken;
 import java.net.URI;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -13,6 +11,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
@@ -31,6 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 @Stateless
 @Path("/authentication")
@@ -47,7 +47,7 @@ public class AuthenticationResource {
     BCryptPasswordHash passwordHash;
     
     @Inject
-    TokenHandler tokenHandler;
+    TokenIdentityStore identityStore;
     
     @POST
     @Path("/login")
@@ -59,7 +59,7 @@ public class AuthenticationResource {
                     .getSingleResult();
             
             if (passwordHash.verify(body.getString("password").toCharArray(), c.getPassword())) {
-                String token = tokenHandler.createCredential(c);
+                String token = identityStore.createCredential(c);
 
                 if (null == token) {
                     return Response.serverError().build();
@@ -84,12 +84,8 @@ public class AuthenticationResource {
     public Response logout(@Context HttpServletRequest request) {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (null != authHeader) {
-            String token = tokenHandler.stripHeader(authHeader);
-            TokenCredential credential = tokenHandler.retrieveCredential(token);
+            identityStore.invalidate(authHeader);
             
-            InvalidToken it = new InvalidToken(token, credential.getExpirationDate());
-            em.persist(it);
-
             return Response.ok().build();
         }
         
@@ -98,16 +94,23 @@ public class AuthenticationResource {
     
     @GET
     @Path("/")
-    public Response read(@Context HttpServletRequest request) {
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+    public Response read(@Context SecurityContext context) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
         
-        if (null != authHeader) {
-            TokenCredential credential = tokenHandler.retrieveCredential(authHeader);
-            
-            return Response.ok(credential.toJson()).build();
+        job.add("subject", context.getUserPrincipal().getName());
+
+        Caller c = em.createNamedQuery("Caller.findByUsername", Caller.class)
+                .setParameter("username", context.getUserPrincipal().getName())
+                .getSingleResult();
+        
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        for (String s : c.getRoles()) {
+            jab.add(s);
         }
         
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        job.add("scope", jab.build());
+        
+        return Response.ok(job.build()).build();
     }
     
     @POST
