@@ -20,6 +20,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <showDeprecation>true</showDeprecation>
         <docker.buildArg.finalName>${project.build.finalName}</docker.buildArg.finalName>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
     <repositories>
@@ -67,27 +68,55 @@
     
     <build>
         <finalName>security</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <targetPath>${project.build.directory}/classes</targetPath>
-            </resource>
-            <resource>
-                <directory>src/main/resources-wildfly</directory>
-                <filtering>true</filtering>
-                <targetPath>${project.build.directory}</targetPath>
-            </resource>
-            <resource>
-                <directory>/opt</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>postgresql-42.1.1.jar</include>
-                </includes>
-                <targetPath>${project.build.directory}</targetPath>
-            </resource>
-        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-postgresql-jdbc-driver</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <version>42.1.1</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-standalone.xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources-wildfly</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>${project.build.directory}</targetPath>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -95,6 +124,8 @@
                 <configuration>
                     <images>
                         <image>
+                            <!-- Change this to your own group/user name -->
+                            <!-- %a is the artifact name, %v is the artifact version -->
                             <name>nderwin/%a:%v</name>
                             <build>
                                 <dockerFileDir>${project.basedir}</dockerFileDir>
