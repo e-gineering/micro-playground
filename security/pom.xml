@@ -120,7 +120,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <id>update-dev-database</id>
+            <id>update-database</id>
             <build>
                 <plugins>
                     <plugin>
