@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
     servicetwo:
-        image: nderwin/servicetwo:1.1.0-SNAPSHOT
+        image: nderwin/servicetwo:1.1.0
         container_name: servicetwo
         depends_on:
           - "security"
@@ -11,7 +11,7 @@ services:
           - "8082:8080"
           - "9992:9990"
     serviceone:
-        image: nderwin/serviceone:1.1.0-SNAPSHOT
+        image: nderwin/serviceone:1.1.0
         container_name: serviceone
         depends_on:
           - "security"
@@ -19,7 +19,7 @@ services:
           - "8081:8080"
           - "9991:9990"
     security:
-        image: nderwin/security:1.1.0-SNAPSHOT
+        image: nderwin/security:1.1.0
         container_name: security
         depends_on:
           - "microservdb"
