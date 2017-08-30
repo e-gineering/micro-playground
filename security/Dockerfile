@@ -1,5 +1,5 @@
 # Start from this image
-FROM	nderwin/docker-wildfly:10.1.0.Final.3
+FROM	nderwin/docker-wildfly:latest
 
 # Who to credit/blame for this image
 LABEL	Author="Nathan Erwin <nathan.d.erwin@gmail.com>"
