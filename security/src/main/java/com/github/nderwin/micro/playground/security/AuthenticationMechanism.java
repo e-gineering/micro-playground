@@ -1,7 +1,11 @@
 package com.github.nderwin.micro.playground.security;
 
-import com.github.nderwin.micro.playground.security.jwt.Credential;
-import com.github.nderwin.micro.playground.security.jwt.TokenHandler;
+import com.github.nderwin.micro.playground.security.control.TokenCredential;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
@@ -22,17 +26,31 @@ public class AuthenticationMechanism implements HttpAuthenticationMechanism {
     @Inject
     IdentityStoreHandler identityStoreHandler;
     
-    @Inject
-    TokenHandler tokenHandler;
+    private RSAPrivateKey privateKey;
+    
+    @PostConstruct
+    public void init() {
+        KeyPairGenerator keyGenerator;
+        
+        try {
+            keyGenerator = KeyPairGenerator.getInstance("RSA");
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
+        }
 
+        keyGenerator.initialize(2048);
+        
+        KeyPair kp = keyGenerator.generateKeyPair();
+        
+        privateKey = (RSAPrivateKey) kp.getPrivate();
+    }
+    
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request, final HttpServletResponse response, final HttpMessageContext context) throws AuthenticationException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         
         if (null != authHeader) {
-            Credential credential = tokenHandler.retrieveCredential(authHeader);
-            
-            CredentialValidationResult result = identityStoreHandler.validate(credential);
+            CredentialValidationResult result = identityStoreHandler.validate(new TokenCredential(authHeader));
             
             if (VALID == result.getStatus()) {
                 return context.notifyContainerAboutLogin(result.getCallerPrincipal(), result.getCallerGroups());
@@ -42,6 +60,10 @@ public class AuthenticationMechanism implements HttpAuthenticationMechanism {
         }
 
         return context.doNothing();
+    }
+
+    public RSAPrivateKey getPrivateKey() {
+        return privateKey;
     }
 
 }

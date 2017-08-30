@@ -1,5 +1,6 @@
 nb*
 /dockersecrets
+/database
 /security/target/
 /serviceone/target/
 /servicetwo/target/

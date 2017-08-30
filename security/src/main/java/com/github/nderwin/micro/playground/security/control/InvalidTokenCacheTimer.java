@@ -1,4 +1,4 @@
-package com.github.nderwin.micro.playground.security.jwt;
+package com.github.nderwin.micro.playground.security.control;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
