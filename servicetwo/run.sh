@@ -1,5 +1,5 @@
 #!/bin/bash
-# wait-for-security.sh
+# run.sh
 
 set -e
 

@@ -15,7 +15,7 @@ RUN	apt-get update && apt-get -y install netcat-openbsd
 USER	wildfly
 
 # Add in the command script
-COPY	wait-for-database.sh /opt/wildfly
+COPY	run.sh /opt/wildfly
 
 # Add the JDBC driver
 COPY	target/postgresql-42.1.1.jar /opt/wildfly/standalone/deployments/postgresql-42.1.1.jar
@@ -31,4 +31,4 @@ EXPOSE	8080 9990
 
 HEALTHCHECK CMD curl -f http://security:8080/security/resources/health
 
-CMD	["/opt/wildfly/wait-for-database.sh"]
+CMD	["/opt/wildfly/run.sh"]

@@ -11,7 +11,7 @@ ARG	finalName
 USER	wildfly
 
 # Add in the command script
-COPY	wait-for-security.sh /opt/wildfly
+COPY	run.sh /opt/wildfly
 
 # Add the file to be deployed
 COPY	target/$finalName.war /opt/wildfly/standalone/deployments/$finalName.war
@@ -20,4 +20,4 @@ EXPOSE	8080 9990
 
 HEALTHCHECK CMD curl -f http://serviceone:8080/serviceone/resources/health
 
-CMD	["/opt/wildfly/wait-for-security.sh"]
+CMD	["/opt/wildfly/run.sh"]
