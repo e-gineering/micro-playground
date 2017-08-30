@@ -8,14 +8,14 @@ LABEL	Author="Nathan Erwin <nathan.d.erwin@gmail.com>"
 ARG	finalName
 
 # Install a tool that will help determine if other containers are running
-USER    root
+USER	root
 RUN	apt-get update && apt-get -y install netcat-openbsd
 
 # Make sure all commands are run as the wildfly user instead of root
 USER	wildfly
 
 # Add in the command script
-COPY    wait-for-database.sh /opt/wildfly
+COPY	wait-for-database.sh /opt/wildfly
 
 # Add the JDBC driver
 COPY	target/postgresql-42.1.1.jar /opt/wildfly/standalone/deployments/postgresql-42.1.1.jar
@@ -31,4 +31,4 @@ EXPOSE	8080 9990
 
 HEALTHCHECK CMD curl -f http://security:8080/security/resources/health
 
-CMD     ["/opt/wildfly/wait-for-database.sh"]
+CMD	["/opt/wildfly/wait-for-database.sh"]
