@@ -20,4 +20,4 @@ EXPOSE	8080 9990
 
 HEALTHCHECK CMD curl -f http://serviceone:8080/serviceone/resources/health
 
-CMD     ["/opt/wildfly/wait-for-security.sh", "http://security:8080/security/resources/health", "/opt/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+CMD     ["/opt/wildfly/wait-for-security.sh"]
