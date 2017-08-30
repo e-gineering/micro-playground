@@ -1,12 +1,23 @@
+# Start from this image
 FROM	nderwin/docker-wildfly:10.1.0.Final.3
 
+# Who to credit/blame for this image
 LABEL	Author="Nathan Erwin <nathan.d.erwin@gmail.com>"
 
+# Will contain the name of the war file for the project
 ARG	finalName
 
+# Make sure all commands are run as the wildfly user instead of root
 USER	wildfly
+
+# Add in the command script
+COPY    wait-for-security.sh /opt/wildfly
 
 # Add the file to be deployed
 COPY	target/$finalName.war /opt/wildfly/standalone/deployments/$finalName.war
 
 EXPOSE	8080 9990
+
+HEALTHCHECK CMD curl -f http://servicetwo:8080/servicetwo/resources/health
+
+CMD     ["/opt/wildfly/wait-for-security.sh", "http://serviceone:8080/serviceone/resources/health", "/opt/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
