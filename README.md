@@ -27,14 +27,13 @@ To fire up all of the containers:
 docker-compose up
 ```
 
-To stop the containers, leaving them in place:
-
-```
-docker-compose stop
-```
-
 To stop the containers and remove them:
 
 ```
 docker-compose down
 ```
+
+## Note
+
+`docker-compose stop` will leave the Wildfly containers in a state where they
+won't start again, so it is recommended to use `docker-compose down` for now.

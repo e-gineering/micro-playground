@@ -26,6 +26,9 @@ services:
         ports:
           - "8080:8080"
           - "9990:9990"
+        secrets:
+          - postgres_username
+          - postgres_password
     microservdb:
         image: postgres:9.6.3
         container_name: microservdb
