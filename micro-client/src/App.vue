@@ -55,6 +55,9 @@
 
 <script>
 	import Modal from './components/Modal'
+	import decode from 'jwt-decode'
+
+	const TOKEN_KEY = 'micro-token'
 
 	export default {
 		name: 'app',
@@ -103,19 +106,33 @@
 				this.authenticated = this.isAuthenticated()
 			},
 			getToken () {
-				console.log('fetching token')
-				return localStorage.getItem('micro-token')
+				return localStorage.getItem(TOKEN_KEY)
 			},
 			setToken (token) {
-				localStorage.setItem('micro-token', token)
+				localStorage.setItem(TOKEN_KEY, token)
 			},
 			clearToken () {
-				localStorage.removeItem('micro-token')
+				localStorage.removeItem(TOKEN_KEY)
 			},
 			isAuthenticated: function () {
-				var rawToken = this.getToken()
+				const rawToken = this.getToken()
 
-				return !!rawToken
+				if (!rawToken) {
+					return false
+				}
+
+				const token = decode(rawToken)
+
+				if (!token.exp) {
+					return false
+				}
+
+				const date = new Date(0)
+				date.setUTCSeconds(token.exp)
+
+				const now = new Date()
+
+				return (date >= now)
 			}
 		}
 	}
