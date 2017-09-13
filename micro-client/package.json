@@ -1,6 +1,6 @@
 {
   "name": "micro-client",
-  "version": "1.0.0",
+  "version": "1.0.0-SNAPSHOT",
   "description": "A Vue.js project",
   "author": "Nathan Erwin <nathan.d.erwin@gmail.com>",
   "private": true,
