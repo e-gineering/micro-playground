@@ -56,8 +56,7 @@
 <script>
 	import Modal from './components/Modal'
 	import decode from 'jwt-decode'
-
-	const TOKEN_KEY = 'micro-token'
+	import { getToken, setToken, clearToken } from './utils/auth'
 
 	export default {
 		name: 'app',
@@ -91,7 +90,7 @@
 					}).then(function (json) {
 						var token = json.token
 
-						thiz.setToken(token)
+						setToken(token)
 
 						thiz.authenticated = thiz.isAuthenticated()
 						thiz.username = ''
@@ -102,20 +101,11 @@
 				}
 			},
 			handleLogout () {
-				this.clearToken()
+				clearToken()
 				this.authenticated = this.isAuthenticated()
 			},
-			getToken () {
-				return localStorage.getItem(TOKEN_KEY)
-			},
-			setToken (token) {
-				localStorage.setItem(TOKEN_KEY, token)
-			},
-			clearToken () {
-				localStorage.removeItem(TOKEN_KEY)
-			},
 			isAuthenticated: function () {
-				const rawToken = this.getToken()
+				const rawToken = getToken()
 
 				if (!rawToken) {
 					return false
