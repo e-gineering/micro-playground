@@ -3,4 +3,4 @@ services:
     client:
         build:
             context: .
-        image: "nderwin/micro-client"
+        image: "nderwin/micro-client:1.0.0-SNAPSHOT"

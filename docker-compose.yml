@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
     client:
-        image: "nderwin/micro-client"
+        image: "nderwin/micro-client:1.0.0-SNAPSHOT"
         container_name: client
         depends_on:
           - "servicetwo"
@@ -32,6 +32,9 @@ services:
         ports:
           - "8080:8080"
           - "9990:9990"
+        secrets:
+          - postgres_username
+          - postgres_password
     microservdb:
         image: postgres:9.6.3
         container_name: microservdb
