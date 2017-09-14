@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
     client:
-        image: "nderwin/micro-client"
+        image: "nderwin/micro-client:1.0.0-SNAPSHOT"
         container_name: client
         depends_on:
           - "servicetwo"
