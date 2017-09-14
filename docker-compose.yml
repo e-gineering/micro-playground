@@ -1,11 +1,17 @@
 version: '3.1'
 
 services:
+    client:
+        image: "nderwin/micro-client"
+        container_name: client
+        depends_on:
+          - "servicetwo"
+        ports:
+          - "80:80"
     servicetwo:
         image: nderwin/servicetwo:1.2.0-SNAPSHOT
         container_name: servicetwo
         depends_on:
-          - "security"
           - "serviceone"
         ports:
           - "8082:8080"
