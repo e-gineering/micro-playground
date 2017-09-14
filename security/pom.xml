@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>com.github.nderwin.micro-playground</groupId>
+        <groupId>com.e-gineering.micro-playground</groupId>
         <artifactId>micro-parent</artifactId>
         <version>1.2.0-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
     
-    <groupId>com.github.nderwin.micro-playground</groupId>
+    <groupId>com.e-gineering.micro-playground</groupId>
     <artifactId>security</artifactId>
     <version>1.2.0-SNAPSHOT</version>
     <packaging>war</packaging>
@@ -126,7 +126,7 @@
                         <image>
                             <!-- Change this to your own group/user name -->
                             <!-- %a is the artifact name, %v is the artifact version -->
-                            <name>nderwin/%a:%v</name>
+                            <name>egineering-llc/%a:%v</name>
                             <build>
                                 <dockerFileDir>${project.basedir}</dockerFileDir>
                             </build>
