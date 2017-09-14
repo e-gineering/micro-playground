@@ -1,17 +1,23 @@
 version: '3.1'
 
 services:
+    client:
+        image: "egineering-llc/micro-client:1.0.0-SNAPSHOT"
+        container_name: client
+        depends_on:
+          - "servicetwo"
+        ports:
+          - "80:80"
     servicetwo:
-        image: nderwin/servicetwo:1.1.0-SNAPSHOT
+        image: egineering-llc/servicetwo:1.2.0-SNAPSHOT
         container_name: servicetwo
         depends_on:
-          - "security"
           - "serviceone"
         ports:
           - "8082:8080"
           - "9992:9990"
     serviceone:
-        image: nderwin/serviceone:1.1.0-SNAPSHOT
+        image: egineering-llc/serviceone:1.2.0-SNAPSHOT
         container_name: serviceone
         depends_on:
           - "security"
@@ -19,13 +25,16 @@ services:
           - "8081:8080"
           - "9991:9990"
     security:
-        image: nderwin/security:1.1.0-SNAPSHOT
+        image: egineering-llc/security:1.2.0-SNAPSHOT
         container_name: security
         depends_on:
           - "microservdb"
         ports:
           - "8080:8080"
           - "9990:9990"
+        secrets:
+          - postgres_username
+          - postgres_password
     microservdb:
         image: postgres:9.6.3
         container_name: microservdb
@@ -35,6 +44,7 @@ services:
             POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
             POSTGRES_DB: microserv
         volumes:
+          - ./database:/var/lib/postgresql/data
           - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         ports:
           - "5432:5432"

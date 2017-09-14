@@ -22,16 +22,11 @@ skinparam control {
     borderColor black
 }
 
-skinparam participant {
-    backgroundColor white
-    borderColor black
-}
-
 actor Caller
 boundary RESTFramework
 control AuthenticationMechanism
 control IdentityStore
-participant security
+boundary security
 control HttpMessageContext
 boundary OneResource
 

@@ -2,9 +2,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>com.github.nderwin.micro-playground</groupId>
+    <parent>
+        <groupId>com.e-gineering.micro-playground</groupId>
+        <artifactId>micro-parent</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+    
+    <groupId>com.e-gineering.micro-playground</groupId>
     <artifactId>security</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
@@ -13,6 +20,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <showDeprecation>true</showDeprecation>
         <docker.buildArg.finalName>${project.build.finalName}</docker.buildArg.finalName>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
     <repositories>
@@ -37,15 +45,10 @@
         </dependency>
         
         <!-- JSR 375 Security -->
-<!--        <dependency>
-            <groupId>javax.security.enterprise</groupId>
-            <artifactId>javax.security.enterprise-api</artifactId>
-            <version>1.0-b11</version>
-        </dependency>-->
         <dependency>
             <groupId>org.glassfish.soteria</groupId>
             <artifactId>javax.security.enterprise</artifactId>
-            <version>1.0-b11</version>
+            <version>1.0</version>
         </dependency>
         
         <!-- Password Hashing -->
@@ -65,27 +68,55 @@
     
     <build>
         <finalName>security</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <targetPath>${project.build.directory}/classes</targetPath>
-            </resource>
-            <resource>
-                <directory>src/main/resources-wildfly</directory>
-                <filtering>true</filtering>
-                <targetPath>${project.build.directory}</targetPath>
-            </resource>
-            <resource>
-                <directory>/opt</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>postgresql-42.1.1.jar</include>
-                </includes>
-                <targetPath>${project.build.directory}</targetPath>
-            </resource>
-        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-postgresql-jdbc-driver</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <version>42.1.1</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-standalone.xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources-wildfly</directory>
+                                    <filtering>true</filtering>
+                                    <targetPath>${project.build.directory}</targetPath>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -93,7 +124,9 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>nderwin/%a:%v</name>
+                            <!-- Change this to your own group/user name -->
+                            <!-- %a is the artifact name, %v is the artifact version -->
+                            <name>egineering-llc/%a:%v</name>
                             <build>
                                 <dockerFileDir>${project.basedir}</dockerFileDir>
                             </build>
@@ -145,7 +178,7 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <id>update-dev-database</id>
+            <id>update-database</id>
             <build>
                 <plugins>
                     <plugin>
@@ -167,7 +200,7 @@
                                 </goals>
                                 <configuration>
                                     <driver>org.postgresql.Driver</driver>
-                                    <url>jdbc:postgresql://172.18.0.2:5432/microserv</url>
+                                    <url>jdbc:postgresql://localhost:5432/microserv</url>
                                     <username>${dbuser}</username>
                                     <password>${dbpass}</password>
                                     <changeLogFile>src/main/resources/db/changelog.xml</changeLogFile>
