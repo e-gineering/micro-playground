@@ -2,14 +2,14 @@ version: '3.1'
 
 services:
     client:
-        image: "nderwin/micro-client:1.0.0-SNAPSHOT"
+        image: "egineering-llc/micro-client:1.0.0-SNAPSHOT"
         container_name: client
         depends_on:
           - "servicetwo"
         ports:
           - "80:80"
     servicetwo:
-        image: nderwin/servicetwo:1.2.0-SNAPSHOT
+        image: egineering-llc/servicetwo:1.2.0-SNAPSHOT
         container_name: servicetwo
         depends_on:
           - "serviceone"
@@ -17,7 +17,7 @@ services:
           - "8082:8080"
           - "9992:9990"
     serviceone:
-        image: nderwin/serviceone:1.2.0-SNAPSHOT
+        image: egineering-llc/serviceone:1.2.0-SNAPSHOT
         container_name: serviceone
         depends_on:
           - "security"
@@ -25,7 +25,7 @@ services:
           - "8081:8080"
           - "9991:9990"
     security:
-        image: nderwin/security:1.2.0-SNAPSHOT
+        image: egineering-llc/security:1.2.0-SNAPSHOT
         container_name: security
         depends_on:
           - "microservdb"
